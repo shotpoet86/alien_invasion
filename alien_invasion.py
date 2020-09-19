@@ -28,7 +28,14 @@ class AlienInvasion:
             self._update_screen()
             # calls update method from Ship class
             self.ship.update()
-            self.bullets.update()
+            self.update_bullets()
+
+    def update_bullets(self):
+        self.bullets.update()
+        # gets rid of bullets that have disappeared
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
 
     def _check_events(self):
         """update images on screen, and flips to new screen"""
@@ -56,13 +63,14 @@ class AlienInvasion:
         """respond to key release"""
         if event.key == pygame.K_RIGHT:
             self.ship.moving_right = False
-        elif event.type == pygame.KEYUP:
+        elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
     def _fire_bullet(self):
         # creates new bullet and adds it to the bullet group
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
 
     def _update_screen(self):
         # redraws screen during each pass of loop
